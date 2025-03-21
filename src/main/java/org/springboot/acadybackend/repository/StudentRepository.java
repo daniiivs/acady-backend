@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends MongoRepository<Student, String> {
-    Optional<Student> findByUsername(String username);
-    Optional<Student> findByEmail(String email);
+    Optional<Student> findByUsernameIgnoreCase(String username);
+    Optional<Student> findByEmailIgnoreCase(String email);
 }

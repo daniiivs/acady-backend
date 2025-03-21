@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Objects;
+
 @Document("students") // The name of the collection in MongoDB
 public class Student {
 
@@ -18,28 +20,28 @@ public class Student {
 
     private String password;
     private String name;
-    private String lastName;
+    private String lastname;
     private boolean active;
 
     public Student() {
     }
 
-    public Student(String username, String email, String password, String name, String lastName, boolean active) {
+    public Student(String username, String email, String password, String name, String lastname, boolean active) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.name = name;
-        this.lastName = lastName;
+        this.lastname = lastname;
         this.active = active;
     }
 
-    public Student(String id, String username, String email, String password, String name, String lastName, boolean active) {
+    public Student(String id, String username, String email, String password, String name, String lastname, boolean active) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.name = name;
-        this.lastName = lastName;
+        this.lastname = lastname;
         this.active = active;
     }
 
@@ -83,12 +85,12 @@ public class Student {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public boolean isActive() {
@@ -107,8 +109,20 @@ public class Student {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
-                ", lastName='" + lastName + '\'' +
+                ", lastName='" + lastname + '\'' +
                 ", active=" + active +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) && Objects.equals(username, student.username) && Objects.equals(email, student.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email);
     }
 }

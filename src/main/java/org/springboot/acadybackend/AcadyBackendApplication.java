@@ -9,5 +9,4 @@ public class AcadyBackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(AcadyBackendApplication.class, args);
     }
-
 }
