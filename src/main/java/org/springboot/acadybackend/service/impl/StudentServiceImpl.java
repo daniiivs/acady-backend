@@ -27,12 +27,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Optional<Student> findByEmailIgnoreCase(String email) {
-        return this.studentRepository.findByEmailIgnoreCase(email);
-    }
-
-    @Override
-    public Student register(Student student) {
-        return this.studentRepository.save(student);
+    public Optional<Student> findByEmail(String email) {
+        return this.studentRepository.findByEmail(email);
     }
 }

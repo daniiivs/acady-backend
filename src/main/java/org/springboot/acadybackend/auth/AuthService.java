@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class AuthService implements UserDetailsService {
 
     private final StudentRepository studentRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(StudentRepository studentRepository) {
+    public AuthService(StudentRepository studentRepository, BCryptPasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -44,6 +47,7 @@ public class AuthService implements UserDetailsService {
             error += "username";
         }
         if (error.isEmpty()) {
+            student.setPassword(passwordEncoder.encode(student.getPassword()));
             this.studentRepository.save(student);
             return "";
         }
@@ -51,7 +55,7 @@ public class AuthService implements UserDetailsService {
     }
 
     private boolean existsByEmail(Student student) {
-        return this.studentRepository.findByEmailIgnoreCase(student.getEmail()).isPresent();
+        return this.studentRepository.findByEmail(student.getEmail()).isPresent();
     }
 
     private boolean existsByUsername(Student student) {

@@ -4,8 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Objects;
-
 @Document("students") // The name of the collection in MongoDB
 public class Student {
 
@@ -24,25 +22,6 @@ public class Student {
     private boolean active;
 
     public Student() {
-    }
-
-    public Student(String username, String email, String password, String name, String lastname, boolean active) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.lastname = lastname;
-        this.active = active;
-    }
-
-    public Student(String id, String username, String email, String password, String name, String lastname, boolean active) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.lastname = lastname;
-        this.active = active;
     }
 
     public String getId() {
@@ -99,30 +78,5 @@ public class Student {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", lastName='" + lastname + '\'' +
-                ", active=" + active +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return Objects.equals(id, student.id) && Objects.equals(username, student.username) && Objects.equals(email, student.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, email);
     }
 }

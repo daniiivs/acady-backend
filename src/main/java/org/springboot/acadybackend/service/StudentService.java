@@ -8,6 +8,5 @@ import java.util.Optional;
 public interface StudentService {
     List<Student> findAll();
     Optional<Student> findByUsernameIgnoreCase(String username);
-    Optional<Student> findByEmailIgnoreCase(String email);
-    Student register(Student student);
+    Optional<Student> findByEmail(String email);
 }
