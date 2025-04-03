@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -25,9 +26,21 @@ public class SubjectController {
         return ResponseEntity.ok(subjects);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Subject> findById(@PathVariable String id) {
+        Optional<Subject> subject = this.subjectService.findById(id);
+        return subject.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody Subject subject) {
         this.subjectService.save(subject);
         return ResponseEntity.ok(Collections.singletonMap("message", "Asignatura creada con éxito"));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id) {
+        this.subjectService.deleteById(id);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Asignatura eliminada con éxito"));
     }
 }

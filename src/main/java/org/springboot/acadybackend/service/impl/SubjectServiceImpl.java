@@ -6,6 +6,7 @@ import org.springboot.acadybackend.service.SubjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -22,7 +23,17 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject save(Subject subject) {
-        return this.subjectRepository.save(subject);
+    public void save(Subject subject) {
+        this.subjectRepository.save(subject);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        this.subjectRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Subject> findById(String id) {
+        return subjectRepository.findById(id);
     }
 }
