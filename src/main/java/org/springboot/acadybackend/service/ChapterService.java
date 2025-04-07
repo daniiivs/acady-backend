@@ -10,4 +10,5 @@ public interface ChapterService {
     void deleteById(String id);
     void deleteAllBySubjectId(String subjectId);
     Optional<List<Chapter>> getAllBySubjectId(String subjectId);
+    Optional<List<Chapter>> getAllByStudentId(String studentId);
 }

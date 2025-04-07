@@ -37,4 +37,9 @@ public class ChapterServiceImpl implements ChapterService {
     public Optional<List<Chapter>> getAllBySubjectId(String subjectId) {
         return this.chapterRepository.getAllBySubjectId(subjectId);
     }
+
+    @Override
+    public Optional<List<Chapter>> getAllByStudentId(String studentId) {
+        return this.chapterRepository.getAllByStudentId(studentId);
+    }
 }

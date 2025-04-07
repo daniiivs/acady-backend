@@ -36,6 +36,16 @@ public class ChapterController {
         }
     }
 
+    @GetMapping("/student/{id}")
+    public ResponseEntity<?> getAllByStudentId(@PathVariable String id) {
+        Optional<List<Chapter>> chapters = this.chapterService.getAllByStudentId(id);
+        if (chapters.isPresent()) {
+            return ResponseEntity.ok(chapters.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable String id) {
         this.chapterService.deleteById(id);
