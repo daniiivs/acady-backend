@@ -42,4 +42,9 @@ public class ChapterServiceImpl implements ChapterService {
     public Optional<List<Chapter>> getAllByStudentId(String studentId) {
         return this.chapterRepository.getAllByStudentId(studentId);
     }
+
+    @Override
+    public Optional<Chapter> getById(String id) {
+        return this.chapterRepository.findById(id);
+    }
 }

@@ -28,6 +28,11 @@ public class PdfFileServiceImpl implements PdfFIleService {
     }
 
     @Override
+    public List<PdfFile> findAllByChapterId(String chapterId) {
+        return this.pdfFileRepository.findAllByChapterId(chapterId);
+    }
+
+    @Override
     public Optional<PdfFile> findById(String pdfId) {
         return this.pdfFileRepository.findById(pdfId);
     }

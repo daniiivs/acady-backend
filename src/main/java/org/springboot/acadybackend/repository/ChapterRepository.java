@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface ChapterRepository extends MongoRepository<Chapter, String> {
     Optional<List<Chapter>> getAllByStudentId(String studentId);
     Optional<List<Chapter>> getAllBySubjectId(String subjectId);
+    Optional<Chapter> getById(String id);
     void deleteAllBySubjectId(String subjectId);
 }
