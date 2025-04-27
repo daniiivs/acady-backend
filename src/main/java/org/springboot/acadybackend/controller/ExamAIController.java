@@ -39,6 +39,16 @@ public class ExamAIController {
         this.gridFsTemplate = gridFsTemplate;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable String id) {
+        Optional<ExamAI> exam = this.examAIService.findById(id);
+        if (exam.isPresent()) {
+            return ResponseEntity.ok(exam.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/exam/{id}")
     public ResponseEntity<?> getAllByExamId(@PathVariable String id) {
         Optional<List<ExamAI>> exams = this.examAIService.findAllByExamId(id);
@@ -57,6 +67,18 @@ public class ExamAIController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteExamAI(@PathVariable String id) {
+        this.examAIService.deleteById(id);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Examen de IA eliminado con éxito"));
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<?> saveExamAI(@RequestBody ExamAI examAI) {
+        this.examAIService.saveExamAI(examAI);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Examen de IA guardado"));
     }
 
     @PostMapping("/generate/{id}")
@@ -101,6 +123,7 @@ public class ExamAIController {
                 examAI.setStudentId(studentIdRef.get());
                 examAI.setSubjectId(subjectIdRef.get());
                 examAI.setExamId(id);
+                examAI.setChapterIds(chapterIds);
                 examAI.setGrade((double) -1);
 
                 this.examAIService.saveExamAI(examAI);

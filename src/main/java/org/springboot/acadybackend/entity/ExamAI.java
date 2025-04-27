@@ -15,6 +15,7 @@ public class ExamAI {
     private String subjectId;
     private String examId;
     private Double grade;
+    private List<String> chapterIds;
     private List<Question> questions;
 
     public ExamAI() {
@@ -58,6 +59,14 @@ public class ExamAI {
 
     public void setGrade(Double grade) {
         this.grade = grade;
+    }
+
+    public List<String> getChapterIds() {
+        return chapterIds;
+    }
+
+    public void setChapterIds(List<String> chapterIds) {
+        this.chapterIds = chapterIds;
     }
 
     public List<Question> getQuestions() {

@@ -52,9 +52,11 @@ public class ExamAIServiceImpl implements ExamAIService {
                       "question": "...",
                       "answers": [
                         { "letter": "a", "answerText": "..." },
-                        { "letter": "b", "answerText": "..." }
+                        { "letter": "b", "answerText": "..." },
+                        { "letter": "c", "answerText": "..." },
+                        { "letter": "d", "answerText": "..." }
                       ],
-                      "correctAnswer": "a",
+                      "correctAnswer": "la letra de la respuesta correcta",
                       "chosenAnswer": ""
                     }
                   ]
@@ -63,25 +65,25 @@ public class ExamAIServiceImpl implements ExamAIService {
         // Concatenar el texto que se le pasa como base para generar las preguntas.
 
         // Devolver el prompt construido
-        return "Basándote en los siguientes apuntes:\n\n" + text + "\n\nGenera un examen de 10 preguntas en formato JSON siguiendo esta estructura:\n" + jsonTemplate +". Solo devuelve como respuesta esa estructura, sin nada más. Evita /n innecesarios, saltos de línea y elementos que dificulten el parseo a json,";
+        return "Basándote en los siguientes apuntes:\n\n" + text + "\n\nGenera un examen de 10 preguntas (asegurándote de que la respuesta correcta pueda ser una de las 4 opciones de manera aleatoria; la a, la b, la c o la d) en formato JSON siguiendo esta estructura:\n" + jsonTemplate + ". Solo devuelve como respuesta esa estructura, sin nada más. Evita /n innecesarios, saltos de línea y elementos que dificulten el parseo a json,";
     }
 
     public Mono<String> requestExamFromGemini(String text) {
         String prompt = buildPrompt(text);
 
         String payload = String.format("""
-        {
-          "contents": [
-            {
-              "parts": [
                 {
-                  "text": "%s"
+                  "contents": [
+                    {
+                      "parts": [
+                        {
+                          "text": "%s"
+                        }
+                      ]
+                    }
+                  ]
                 }
-              ]
-            }
-          ]
-        }
-        """, escapeJson(prompt));
+                """, escapeJson(prompt));
 
         return webClient.post()
                 .bodyValue(payload)
@@ -106,6 +108,11 @@ public class ExamAIServiceImpl implements ExamAIService {
     }
 
     @Override
+    public Optional<ExamAI> findById(String id) {
+        return this.examAIRepository.findById(id);
+    }
+
+    @Override
     public Optional<List<ExamAI>> findAllByExamId(String examId) {
         return this.examAIRepository.findAllByExamId(examId);
     }
@@ -118,5 +125,25 @@ public class ExamAIServiceImpl implements ExamAIService {
     @Override
     public void saveExamAI(ExamAI examAI) {
         this.examAIRepository.save(examAI);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        this.examAIRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllByExamId(String examId) {
+        this.examAIRepository.deleteAllByExamId(examId);
+    }
+
+    @Override
+    public void deleteAllByChapterIdsContaining(String chapterId) {
+        this.examAIRepository.deleteAllByChapterIdsContaining(chapterId);
+    }
+
+    @Override
+    public void deleteAllBySubjectId(String subjectId) {
+        this.examAIRepository.deleteAllBySubjectId(subjectId);
     }
 }

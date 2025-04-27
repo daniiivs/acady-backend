@@ -97,22 +97,4 @@ public class PdfFileController {
 
         return ResponseEntity.ok(Collections.singletonMap("message", "Documento eliminado exitosamente"));
     }
-
-    @DeleteMapping("/delete/chapter/{id}")
-    public ResponseEntity<?> deleteFileByChapterId(@PathVariable String id) {
-        this.pdfFileService.deleteAllByChapterId(id);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Documentos eliminados exitosamente"));
-    }
-
-    @DeleteMapping("/delete/subject/{id}")
-    public ResponseEntity<?> deleteFileBySubjectId(@PathVariable String id) {
-        this.pdfFileService.deleteAllBySubjectId(id);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Documentos eliminados exitosamente"));
-    }
-
-    @DeleteMapping("/delete/student/{id}")
-    public ResponseEntity<?> deleteFileByStudentId(@PathVariable String id) {
-        this.pdfFileService.deleteAllByStudentId(id);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Documentos eliminados exitosamente"));
-    }
 }

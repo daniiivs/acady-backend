@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface ExamAIRepository extends MongoRepository<ExamAI, String> {
     Optional<List<ExamAI>> findAllByExamId(String examId);
     Optional<List<ExamAI>> findAllByStudentId(String studentId);
+    void deleteAllByExamId(String examId);
+    void deleteAllByChapterIdsContaining(String chapterId);
+    void deleteAllBySubjectId(String subjectId);
 }

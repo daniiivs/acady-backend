@@ -44,16 +44,4 @@ public class TaskController {
         this.taskService.deleteAllById(id);
         return ResponseEntity.ok(Collections.singletonMap("message", "Tarea eliminada con éxito"));
     }
-
-    @DeleteMapping("/delete/subject/{id}")
-    public ResponseEntity<?> deleteBySubjectId(@PathVariable String id) {
-        this.taskService.deleteAllBySubjectId(id);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Tareas eliminadas con éxito"));
-    }
-
-    @DeleteMapping("/delete/student/{id}")
-    public ResponseEntity<?> deleteByStudentId(@PathVariable String id) {
-        this.taskService.deleteAllByStudentId(id);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Tareas eliminadas con éxito"));
-    }
 }
