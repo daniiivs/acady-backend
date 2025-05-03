@@ -6,12 +6,14 @@ import org.springboot.acadybackend.entity.Chapter;
 import org.springboot.acadybackend.entity.Exam;
 import org.springboot.acadybackend.entity.ExamAI;
 import org.springboot.acadybackend.entity.PdfFile;
+import org.springboot.acadybackend.service.ChapterService;
 import org.springboot.acadybackend.service.impl.ExamAIServiceImpl;
 import org.springboot.acadybackend.service.impl.PdfFileServiceImpl;
 import org.springboot.acadybackend.utils.PdfUtils;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -24,19 +26,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/aiexam")
+@RequestMapping("/api/aiexam")
 public class ExamAIController {
 
     private final ExamAIServiceImpl examAIService;
     private final PdfFileServiceImpl pdfFileService;
     private final GridFsTemplate gridFsTemplate;
+    private final ChapterService chapterService;
 
-    public ExamAIController(ExamAIServiceImpl examAIService, PdfFileServiceImpl pdfFileService, GridFsTemplate gridFsTemplate) {
+    public ExamAIController(ExamAIServiceImpl examAIService, PdfFileServiceImpl pdfFileService, GridFsTemplate gridFsTemplate, ChapterService chapterService) {
         this.examAIService = examAIService;
         this.pdfFileService = pdfFileService;
         this.gridFsTemplate = gridFsTemplate;
+        this.chapterService = chapterService;
     }
 
     @GetMapping("/{id}")
@@ -91,6 +94,12 @@ public class ExamAIController {
 
         for (String chapterId : chapterIds) {
             List<PdfFile> pdfFiles = pdfFileService.findAllByChapterId(chapterId);
+
+            if (pdfFiles.isEmpty()) {
+                Optional<Chapter> emptyChapter = chapterService.getById(chapterId);
+                return emptyChapter.map(chapter -> Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", "\"Tema " + chapter.getNumber() + ": " + chapter.getName() + "\" no tiene documentos."))))
+                        .orElseGet(() -> Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", "Hay un tema sin documentos."))));
+            }
 
             for (PdfFile pdfFile : pdfFiles) {
                 GridFSFile gridFsFile = gridFsTemplate.findOne(

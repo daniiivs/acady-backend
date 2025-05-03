@@ -19,7 +19,6 @@ public class Student {
     private String password;
     private String name;
     private String lastname;
-    private boolean active;
 
     public Student() {
     }
@@ -70,13 +69,5 @@ public class Student {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 }

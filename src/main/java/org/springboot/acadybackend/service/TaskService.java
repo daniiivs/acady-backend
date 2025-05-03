@@ -10,5 +10,4 @@ public interface TaskService {
     void save(Task task);
     void deleteAllById(String id);
     void deleteAllBySubjectId(String subjectId);
-    void deleteAllByStudentId(String studentId);
 }

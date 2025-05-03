@@ -20,9 +20,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/files")
+@RequestMapping("/api/files")
 public class PdfFileController {
 
     private final GridFsTemplate gridFsTemplate;

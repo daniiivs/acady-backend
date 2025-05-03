@@ -21,6 +21,16 @@ public class Exam {
 
     public Exam() {}
 
+    public Exam(String id, Date date, boolean completed, Double grade, List<String> chapterIds, String studentId, String subjectId) {
+        this.id = id;
+        this.date = date;
+        this.completed = completed;
+        this.grade = grade;
+        this.chapterIds = chapterIds;
+        this.studentId = studentId;
+        this.subjectId = subjectId;
+    }
+
     public String getId() {
         return id;
     }

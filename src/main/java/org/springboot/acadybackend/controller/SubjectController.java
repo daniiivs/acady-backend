@@ -9,9 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/subjects")
+@RequestMapping("/api/subjects")
 public class SubjectController {
 
     private final SubjectServiceImpl subjectService;

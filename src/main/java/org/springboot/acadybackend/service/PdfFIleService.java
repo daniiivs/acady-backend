@@ -13,5 +13,4 @@ public interface PdfFIleService {
     void deleteById(String id);
     void deleteAllByChapterId(String chapterId);
     void deleteAllBySubjectId(String subjectId);
-    void deleteAllByStudentId(String studentId);
 }

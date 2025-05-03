@@ -73,17 +73,4 @@ public class PdfFileServiceImpl implements PdfFIleService {
         // Eliminar metadatos de la base de datos
         pdfFileRepository.deleteAllBySubjectId(subjectId);
     }
-
-    @Override
-    public void deleteAllByStudentId(String studentId) {
-        List<PdfFile> files = pdfFileRepository.findAllByStudentId(studentId);
-
-        // Eliminar archivos de GridFS
-        for (PdfFile file : files) {
-            gridFsTemplate.delete(new Query(Criteria.where("_id").is(file.getGridFsId())));
-        }
-
-        // Eliminar metadatos de la base de datos
-        pdfFileRepository.deleteAllByStudentId(studentId);
-    }
 }

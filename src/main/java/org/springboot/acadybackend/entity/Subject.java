@@ -27,6 +27,14 @@ public class Subject {
         this.studentId = studentId;
     }
 
+    public Subject(String id, String code, String name, String color, String studentId) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.color = color;
+        this.studentId = studentId;
+    }
+
     public String getId() {
         return id;
     }

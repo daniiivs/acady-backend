@@ -1,6 +1,5 @@
 package org.springboot.acadybackend.controller;
 
-import org.springboot.acadybackend.entity.Subject;
 import org.springboot.acadybackend.entity.Task;
 import org.springboot.acadybackend.service.impl.TaskServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -8,11 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 public class TaskController {
 
     private final TaskServiceImpl taskService;

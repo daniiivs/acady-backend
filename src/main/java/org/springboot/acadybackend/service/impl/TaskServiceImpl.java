@@ -40,9 +40,4 @@ public class TaskServiceImpl implements TaskService {
     public void deleteAllBySubjectId(String subjectId) {
         this.taskRepository.deleteAllBySubjectId(subjectId);
     }
-
-    @Override
-    public void deleteAllByStudentId(String studentId) {
-        this.taskRepository.deleteAllByStudentId(studentId);
-    }
 }
