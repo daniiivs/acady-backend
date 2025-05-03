@@ -27,15 +27,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+            String jwt = parseJwt(request); // Obtener jwt
+            if (jwt != null && jwtUtils.validateJwtToken(jwt)) { // Valida el token
                 if (jwtUtils.isTokenBlacklisted(jwt)) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido");
                     return;
                 }
 
-                String username = jwtUtils.getUsernameFromToken(jwt);
-                UserDetails userDetails = authService.loadUserByUsername(username);
+                String username = jwtUtils.getUsernameFromToken(jwt); // Obtenemos nombre de usuario del token
+                UserDetails userDetails = authService.loadUserByUsername(username); // Cargamos el UserDetails con usuario del token
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
@@ -50,6 +50,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+    // Obtiene el jwt
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
         if (headerAuth != null && headerAuth.startsWith("Bearer ")) {

@@ -14,18 +14,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class JwtUtil {
+
     @Value("${jwt.secret}")
     private String jwtSecret;
+
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
+
     private SecretKey key;
-    // Initializes the key after the class is instantiated and the jwtSecret is injected,
-    // preventing the repeated creation of the key and enhancing performance
+
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
-    // Generate JWT token
+
+    // Generar JWT token
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -34,7 +37,8 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-    // Get username from JWT token
+
+    // Obtener usuario del JWT token
     public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key).build()
@@ -42,21 +46,22 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
-    // Validate JWT token
+
+    // Validar JWT token
     public boolean validateJwtToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException e) {
-            System.out.println("Invalid JWT signature: " + e.getMessage());
+            System.out.println("Firma inválida: " + e.getMessage());
         } catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token: " + e.getMessage());
+            System.out.println("Token inválido: " + e.getMessage());
         } catch (ExpiredJwtException e) {
-            System.out.println("JWT token is expired: " + e.getMessage());
+            System.out.println("Tooken ha expirado: " + e.getMessage());
         } catch (UnsupportedJwtException e) {
-            System.out.println("JWT token is unsupported: " + e.getMessage());
+            System.out.println("Token carece de soporte: " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty: " + e.getMessage());
+            System.out.println("JWT está vacío: " + e.getMessage());
         }
         return false;
     }

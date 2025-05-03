@@ -1,17 +1,14 @@
 package org.springboot.acadybackend.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springboot.acadybackend.auth.AuthEntryPointJwt;
 import org.springboot.acadybackend.auth.AuthService;
 import org.springboot.acadybackend.auth.AuthTokenFilter;
 import org.springboot.acadybackend.utils.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,7 +16,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -29,8 +25,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration // Stablish this file as a configuration file
-@EnableWebSecurity // Create our own filter flow (configuration)
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final AuthService authService;
@@ -45,21 +41,25 @@ public class SecurityConfig {
         this.jwtUtil = jwtUtil;
     }
 
+    // Filtro para comprobar JWT
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter(jwtUtil, authService);
     }
 
+    // Devuelve el Autentication Manager que usaremos en el login
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // Devuelve los UserDetails del usuario autenticado
     @Bean
     public UserDetailsService userDetailsService() {
         return this.authService;
     }
 
+    // Es el encargado de hacer la autenticación
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -68,42 +68,11 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    /*@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin(login -> login
-                        .loginProcessingUrl("/api/auth/login")
-                        .successHandler((request, response, authentication) -> {
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_OK);
-                            response.getWriter().write("{\"message\": \"Login exitoso\"}");
-                        })
-                        .failureHandler((request, response, exception) -> {
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.getWriter().write("{\"error\": \"Credenciales inválidas\"}");
-                        }))
-                .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"message\": \"Logout exitoso\"}");
-                        })
-                )
-                .build();
-    }*/
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Peticiones de otros dominios
+                .csrf(AbstractHttpConfigurer::disable) // Para proteger de cookies
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/api/aiexam/generate/**").permitAll()
                         .anyRequest().authenticated()
@@ -127,11 +96,11 @@ public class SecurityConfig {
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("Set-Cookie", "Authorization"));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration); // Aplicar a todas las rutas
         return source;
     }
 }

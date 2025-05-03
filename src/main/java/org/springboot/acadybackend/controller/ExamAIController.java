@@ -86,31 +86,33 @@ public class ExamAIController {
 
     @PostMapping("/generate/{id}")
     public Mono<ResponseEntity<Map<String, String>>> generateExam(@RequestBody List<String> chapterIds, @PathVariable String id) throws IOException {
-        StringBuilder fullText = new StringBuilder();
+        StringBuilder fullText = new StringBuilder(); // Texto del examen
 
+        // Variables de referencia (para dentro del return)
         AtomicReference<String> studentIdRef = new AtomicReference<>("");
         AtomicReference<String> subjectIdRef = new AtomicReference<>("");
         boolean first = true;
 
         for (String chapterId : chapterIds) {
-            List<PdfFile> pdfFiles = pdfFileService.findAllByChapterId(chapterId);
+            List<PdfFile> pdfFiles = pdfFileService.findAllByChapterId(chapterId); // Obtener metadatos de pdfs
 
-            if (pdfFiles.isEmpty()) {
+            if (pdfFiles.isEmpty()) { // Si un tema no tiene pdfs, dar un error indicándolo
                 Optional<Chapter> emptyChapter = chapterService.getById(chapterId);
                 return emptyChapter.map(chapter -> Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", "\"Tema " + chapter.getNumber() + ": " + chapter.getName() + "\" no tiene documentos."))))
                         .orElseGet(() -> Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", "Hay un tema sin documentos."))));
             }
 
             for (PdfFile pdfFile : pdfFiles) {
-                GridFSFile gridFsFile = gridFsTemplate.findOne(
+                GridFSFile gridFsFile = gridFsTemplate.findOne( // Obtener los pdfs por los metadatos
                         new Query(Criteria.where("_id").is(pdfFile.getGridFsId()))
                 );
 
+                // Extraemos el texto del pdf
                 InputStream inputStream = gridFsTemplate.getResource(gridFsFile).getInputStream();
                 String text = PdfUtils.exactText(inputStream);
                 fullText.append(text).append("\n");
 
-                if (first) {
+                if (first) { // Establecemos las variables de referencia (solo una vez)
                     studentIdRef.set(pdfFile.getStudentId());
                     subjectIdRef.set(pdfFile.getSubjectId());
                     first = false;
@@ -118,22 +120,24 @@ public class ExamAIController {
             }
         }
 
+        // Generamos el examen IA en formato JSON
         Mono<String> examMono = this.examAIService.requestExamFromGemini(fullText.toString());
 
         return examMono.flatMap(examJson -> {
             try {
-                // Limpieza más robusta
+                // Limpiamos caracteres innecesarios
                 String jsonContent = examJson
                         .replaceAll("```json", "")
                         .replaceAll("```", "")
                         .trim();
 
+                // Creamos el objeto ExamAI
                 ExamAI examAI = this.examAIService.parseExamAI(jsonContent);
                 examAI.setStudentId(studentIdRef.get());
                 examAI.setSubjectId(subjectIdRef.get());
                 examAI.setExamId(id);
                 examAI.setChapterIds(chapterIds);
-                examAI.setGrade((double) -1);
+                examAI.setGrade((double) -1); // Nota -1 para indicar que no se ha realizado
 
                 this.examAIService.saveExamAI(examAI);
 

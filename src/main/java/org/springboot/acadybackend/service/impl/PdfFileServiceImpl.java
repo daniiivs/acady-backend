@@ -49,28 +49,29 @@ public class PdfFileServiceImpl implements PdfFIleService {
 
     @Override
     public void deleteAllByChapterId(String chapterId) {
-        // 1. Buscar todos los archivos asociados al chapter
+        // Busca todos los archivos asociados al tema
         List<PdfFile> files = pdfFileRepository.findAllByChapterId(chapterId);
 
-        // 2. Eliminar cada archivo de GridFS
+        // Elimina cada archivo de GridFS (si las ids coinciden)
         for (PdfFile file : files) {
             gridFsTemplate.delete(new Query(Criteria.where("_id").is(file.getGridFsId())));
         }
 
-        // 3. Eliminar los metadatos de la base de datos
+        // Eliminar los metadatos de la base de datos
         pdfFileRepository.deleteAllByChapterId(chapterId);
     }
 
     @Override
     public void deleteAllBySubjectId(String subjectId) {
+        // Busca todos los archivos asociados a la asignatura
         List<PdfFile> files = pdfFileRepository.findAllBySubjectId(subjectId);
 
-        // Eliminar archivos de GridFS
+        // Eliminar archivos de GridFS (si las ids coinciden)
         for (PdfFile file : files) {
             gridFsTemplate.delete(new Query(Criteria.where("_id").is(file.getGridFsId())));
         }
 
-        // Eliminar metadatos de la base de datos
+        // Eliminar los metadatos de la base de datos
         pdfFileRepository.deleteAllBySubjectId(subjectId);
     }
 }

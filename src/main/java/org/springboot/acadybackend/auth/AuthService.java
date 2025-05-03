@@ -23,6 +23,7 @@ public class AuthService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Carga un objeto UserDetails que Spring usa para la autenticación
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Student> student = studentRepository.findByUsernameIgnoreCase(username);
@@ -38,6 +39,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    // Comprueba si el email y el nombre de usuario están en uso
     public String checkAndRegister(@RequestBody Student student) {
         String error = "";
         if (existsByEmail(student)) {

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class PdfUtils {
-
     public static String exactText(InputStream inputStream) throws IOException {
         PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(inputStream));
         PDFTextStripper stripper = new PDFTextStripper();

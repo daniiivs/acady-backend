@@ -23,22 +23,18 @@ import java.util.Optional;
 public class ExamAIServiceImpl implements ExamAIService {
 
     private final ExamAIRepository examAIRepository;
-    private final WebClient webClient;
+    private final WebClient webClient; // Para comunicarnos con un la web
 
     public ExamAIServiceImpl(ExamAIRepository examAIRepository, @Value("${gemini.api.key}") String apiKey,
                              @Value("${gemini.endpoint}") String geminiEndpoint) {
         this.examAIRepository = examAIRepository;
         this.webClient = WebClient.builder()
-                .baseUrl(geminiEndpoint)
-                .baseUrl(geminiEndpoint + "?key=" + apiKey)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .baseUrl(geminiEndpoint + "?key=" + apiKey) // url + clave api de gemini
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE) // headers necesarios para la comunicación
                 .build();
     }
 
-    public String extractText(InputStream pdfStream) throws IOException {
-        return PdfUtils.exactText(pdfStream);
-    }
-
+    // Plantilla para construir el objeto de examen de IA
     private String buildPrompt(String text) {
         String jsonTemplate = """
                 {
@@ -62,9 +58,6 @@ public class ExamAIServiceImpl implements ExamAIService {
                   ]
                 }""";
 
-        // Concatenar el texto que se le pasa como base para generar las preguntas.
-
-        // Devolver el prompt construido
         return "Basándote en los siguientes apuntes:\n\n" + text + "\n\nGenera un examen de 10 preguntas (asegurándote de que la respuesta correcta pueda ser una de las 4 opciones de manera aleatoria; la a, la b, la c o la d) en formato JSON siguiendo esta estructura:\n" + jsonTemplate + ". Solo devuelve como respuesta esa estructura, sin nada más. Evita /n innecesarios, saltos de línea y elementos que dificulten el parseo a json,";
     }
 
@@ -83,14 +76,15 @@ public class ExamAIServiceImpl implements ExamAIService {
                     }
                   ]
                 }
-                """, escapeJson(prompt));
+                """, escapeJson(prompt)); // Formato para gemini
 
         return webClient.post()
                 .bodyValue(payload)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class); // Mono actúa como una "caja vacía" que se llenará con un String
     }
 
+    // Para caracteres conflictivos
     private String escapeJson(String raw) {
         return raw
                 .replace("\\", "\\\\")
@@ -99,12 +93,12 @@ public class ExamAIServiceImpl implements ExamAIService {
     }
 
     public ExamAI parseExamAI(String jsonExam) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper(); // Lector JSON
 
-        JsonNode rootNode = mapper.readTree(jsonExam);
-        JsonNode contentNode = rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text");
+        JsonNode rootNode = mapper.readTree(jsonExam); // Convierte a estructura de árbol
+        JsonNode contentNode = rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text"); // Navega dentro del árbol hasta llegar al texto
 
-        return mapper.readValue(contentNode.asText(), ExamAI.class);
+        return mapper.readValue(contentNode.asText(), ExamAI.class); // Convierte el valor en un objeto ExamAI
     }
 
     @Override

@@ -13,5 +13,4 @@ public interface PdfFileRepository extends MongoRepository<PdfFile, String> {
     List<PdfFile> findAllByStudentId(String studentId);
     void deleteAllByChapterId(String chapterId);
     void deleteAllBySubjectId(String subjectId);
-    void deleteAllByStudentId(String studentId);
 }

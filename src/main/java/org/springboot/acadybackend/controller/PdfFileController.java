@@ -1,6 +1,5 @@
 package org.springboot.acadybackend.controller;
 
-import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import org.bson.types.ObjectId;
 import org.springboot.acadybackend.entity.PdfFile;
@@ -34,14 +33,14 @@ public class PdfFileController {
 
     @PostMapping("/upload/{chapterId}&&{subjectId}&&{studentId}")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable String chapterId, @PathVariable String subjectId, @PathVariable String studentId) throws IOException {
-        // 1. Almacenar en GridFS
+        // Almacenamos en GridFS
         ObjectId fileId = gridFsTemplate.store(
                 file.getInputStream(),
                 file.getOriginalFilename(),
                 file.getContentType()
         );
 
-        // 2. Guardar metadatos
+        // Guardamos metadatos
         PdfFile pdfFile = new PdfFile();
         pdfFile.setFilename(file.getOriginalFilename());
         pdfFile.setContentType(file.getContentType());
@@ -69,17 +68,17 @@ public class PdfFileController {
 
     @GetMapping("/download/{id}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String id) throws IOException {
-        // 1. Obtener metadatos
+        // Obtenemos metadatos
         PdfFile pdfFile = pdfFileService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Archivo no encontrado"));
 
-        // 2. Buscar en GridFS
+        // Buscamos en GridFS por id
         GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(pdfFile.getGridFsId())));
 
-        // 3. Obtener el InputStream del archivo
+        // Obtenemos el InputStream del archivo desde el GridFS
         InputStream inputStream = gridFsTemplate.getResource(file).getInputStream();
 
-        // 4. Devolver el PDF como recurso descargable
+        // Devolvemos el PDF como recurso descargable
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + pdfFile.getFilename() + "\"")
                 .contentType(MediaType.APPLICATION_PDF)
