@@ -6,7 +6,7 @@ Este repositorio contiene el backend de la aplicación.
 
 ## Tecnologías utilizadas
 
-- Spring Boot 3
+- Spring Boot
 - Spring Data MongoDB
 - MongoDB Atlas
 - GridFS (para almacenamiento de archivos PDF)
